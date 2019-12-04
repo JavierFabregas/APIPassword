@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Helper\Token;
 class userController extends Controller
 {
     /**
@@ -35,19 +36,23 @@ class userController extends Controller
     public function store(Request $request)
     {
         $user = new User();
-        $user->register($request);
+        if (!$user->userExists($request->email)){
+            $user->register($request);
 
-        $data_token = [
-            "email" => $user->email,
-        ];
+            $data_token = [
+                "email" => $user->email,
+            ];
 
-        $token = new Token($data_token);
-        
-        $tokenEncoded = $token->encode();
+            $token = new Token($data_token);
+            
+            $tokenEncoded = $token->encode();
 
-        return response()->json([
-            "token" => $tokenEncoded
-        ], 201);
+            return response()->json([
+                "token" => $tokenEncoded
+            ], 201);
+        }else{
+            return response()->json(["Error" => "No se pueden crear usuarios con el mismo Email o con el Email vacío"]);
+        }
     }
 
     /**
@@ -56,9 +61,14 @@ class userController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request,$id = null)
     {
-        //
+        $user = User::where('email',$request->data_token->email)->first();
+        if (isset($user)) {            
+            return response()->json($user);
+        }else{
+            return response()->json(["Error" => "No existe un usuario con ese mail"]);
+        }
     }
 
     /**
@@ -93,5 +103,23 @@ class userController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function login(Request $request){
+
+        $data_token = ['email'=>$request->email];
+        
+        $user = User::where($data_token)->first();  
+       
+        if ($user!=null) {       
+            if($request->password == $user->password)
+            {       
+                $token = new Token($data_token);
+                $tokenEncoded = $token->encode();
+
+                return response()->json(["token" => $tokenEncoded], 201);
+            }   
+        }     
+        return response()->json(["Error" => "No se ha encontrado"], 401);
     }
 }

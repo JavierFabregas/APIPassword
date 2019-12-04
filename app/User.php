@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Http\Request;
 class User extends Model
 {
     
@@ -20,7 +20,8 @@ class User extends Model
     }
 
     Public function userExists($email){
-        $user = self::all();
+        $users = self::where('email',$email)->get();
+        
         foreach ($users as $key => $value) {
             if($value->email == $email){
                 return true;
