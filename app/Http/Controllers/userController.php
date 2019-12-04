@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\User;
 class userController extends Controller
 {
     /**
@@ -34,7 +34,20 @@ class userController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = new User();
+        $user->register($request);
+
+        $data_token = [
+            "email" => $user->email,
+        ];
+
+        $token = new Token($data_token);
+        
+        $tokenEncoded = $token->encode();
+
+        return response()->json([
+            "token" => $tokenEncoded
+        ], 201);
     }
 
     /**
