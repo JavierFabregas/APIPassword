@@ -25,4 +25,5 @@ Route::group(['middleware' => ['auth']], function ()
 {
 	Route::apiResource('users','userController');
 	Route::apiResource('category','categoryController');    
+	Route::apiResource('password','passwordController');    
 });

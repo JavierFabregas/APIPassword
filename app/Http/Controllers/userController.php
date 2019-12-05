@@ -98,7 +98,14 @@ class userController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::where('email',$request->data_token->email)->first();
+
+        $user->email = $request->email;
+        $user->name = $request->name;
+        $user->password = $request->password;
+
+        $user->update();
+        return response()->json(["Success" => "Se ha modificado el usuario"], 201);
     }
 
     /**

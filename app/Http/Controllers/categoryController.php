@@ -48,8 +48,7 @@ class categoryController extends Controller
 
             $category->register($user->id,$request->name);
             return response()->json(["Success" => "Se ha creado la categoria"], 201);
-        }
-        
+        }        
     }
 
     /**
