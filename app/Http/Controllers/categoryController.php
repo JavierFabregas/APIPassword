@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Category;
+use App\User;
 
 class categoryController extends Controller
 {
@@ -34,7 +36,26 @@ class categoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $category = new Category();
+        //var_dump($request->data_token->email);exit();
+
+        $user = User::where('email',$request->data_token->email)->first();
+        $categories = Category::where('user_id',$user->id);
+        
+        $repeatedCategory = false;
+
+        foreach ($variable as $key => $value) {
+            if ($value->name == $request->name) {
+                $repeatedCategory = true;
+            }
+        }
+
+        if ($repeatedCategory) {
+            return response()->json(["Error" => "No puedes repetir el nombre de la categoria"], 401);
+        }else{            
+            $category->register($user->id,$request->name);
+            return response()->json(["Success" => "Se ha creado la categoria"], 201);
+        }
     }
 
     /**
@@ -45,7 +66,7 @@ class categoryController extends Controller
      */
     public function show($id)
     {
-        //
+        
     }
 
     /**

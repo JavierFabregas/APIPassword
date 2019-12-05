@@ -23,5 +23,5 @@ Route::post('login','userController@login');
 Route::group(['middleware' => ['auth']], function ()
 {
 	Route::apiResource('users','userController');
-    
+	Route::apiResource('category','categoryController');    
 });

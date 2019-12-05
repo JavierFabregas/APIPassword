@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Helper\Token;
+use App\Category;
 class userController extends Controller
 {
     /**
@@ -63,14 +64,17 @@ class userController extends Controller
      */
     public function show(Request $request,$id = null)
     {
+
         $user = User::where('email',$request->data_token->email)->first();
-        if (isset($user)) {            
-            return response()->json($user);
+        $infoToShow = [];
+        if (isset($user)) {    
+           $categories = Category::where('user_id',$user->id)->get();
+            return response()->json(["User" => $user, "Categories" => $categories,"Categories2" => $categories]);
         }else{
             return response()->json(["Error" => "No existe un usuario con ese mail"]);
         }
     }
-
+    
     /**
      * Show the form for editing the specified resource.
      *

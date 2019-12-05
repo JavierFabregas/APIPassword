@@ -13,4 +13,11 @@ class Category extends Model
     {
         return $this->hasMany('App\Password','category_id');
     }
+    public function register($id_user, $name)
+    {
+        $category = new Category;
+        $category->user_id = $id_user;
+        $category->name = $name;
+        $category->save();
+    }
 }
