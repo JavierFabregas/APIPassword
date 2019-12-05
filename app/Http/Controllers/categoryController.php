@@ -40,22 +40,16 @@ class categoryController extends Controller
         //var_dump($request->data_token->email);exit();
 
         $user = User::where('email',$request->data_token->email)->first();
-        $categories = Category::where('user_id',$user->id);
+        $categorySearched = Category::where('user_id',$user->id)->where('name',$request->name)->first();
         
-        $repeatedCategory = false;
+        if (isset($categorySearched)) {
+             return response()->json(["Error" => "No puedes repetir el nombre de la categoria"], 401);
+        }else{
 
-        foreach ($variable as $key => $value) {
-            if ($value->name == $request->name) {
-                $repeatedCategory = true;
-            }
-        }
-
-        if ($repeatedCategory) {
-            return response()->json(["Error" => "No puedes repetir el nombre de la categoria"], 401);
-        }else{            
             $category->register($user->id,$request->name);
             return response()->json(["Success" => "Se ha creado la categoria"], 201);
         }
+        
     }
 
     /**
@@ -98,8 +92,19 @@ class categoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id = null)
     {
-        //
+        /* Para que funcione los datos deben llegar por params en vez de por el formulario del body (si se hace desde el formulario del body da null) */
+
+        $user = User::where('email',$request->data_token->email)->first();
+        $category = Category::where('user_id',$user->id)->where('name',$request->name)->first();
+
+        
+        if (!isset($category)) {
+             return response()->json(["Error" => "No existe la categoria"], 401);
+        }else{
+            $category->delete();
+            return response()->json(["Success" => "Se ha borrado la categoria"], 201);
+        }
     }
 }

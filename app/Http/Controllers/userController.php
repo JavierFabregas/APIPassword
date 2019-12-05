@@ -65,6 +65,9 @@ class userController extends Controller
     public function show(Request $request,$id = null)
     {
 
+        /* Para que funcione los datos deben llegar por params en vez de por el formulario del body (si se hace desde el formulario del body da null) */
+
+
         $user = User::where('email',$request->data_token->email)->first();
         $infoToShow = [];
         if (isset($user)) {    
@@ -74,7 +77,7 @@ class userController extends Controller
             return response()->json(["Error" => "No existe un usuario con ese mail"]);
         }
     }
-    
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -104,9 +107,18 @@ class userController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        /* Para que funcione los datos deben llegar por params en vez de por el formulario del body (si se hace desde el formulario del body da null) */
+        
+        $user = User::where('email',$request->data_token->email)->first();
+
+         if (!isset($user)) {
+             return response()->json(["Error" => "No existe el usuario"], 401);
+        }else{
+            $user->delete();
+            return response()->json(["Success" => "Se ha borrado el usuario"], 201);
+        }
     }
 
     public function login(Request $request){
