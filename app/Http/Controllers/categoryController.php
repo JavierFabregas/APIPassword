@@ -57,9 +57,16 @@ class categoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id=null)
     {
         
+        $user = User::where('email',$request->data_token->email)->first();
+       if (isset($user)) {    
+           $categories = Category::where('user_id',$user->id)->get();
+            return response()->json([ "Categories" => $categories]);
+        }else{
+            return response()->json(["Error" => "No existe un usuario con ese mail"]);
+        }
     }
 
     /**
@@ -82,7 +89,16 @@ class categoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::where('email',$request->data_token->email)->first();
+        $category = Category::where('user_id',$user->id)->where('name',$request->name)->first();
+
+        if (isset($category)) {
+            $category->name = $request->newName;
+            $category->update();
+            return response()->json(["Success" => "Se ha modificado la categoria"], 201);
+        }else{
+             return response()->json(["Error" => "No existe la categoria"], 401);
+        }
     }
 
     /**

@@ -72,7 +72,7 @@ class userController extends Controller
         $infoToShow = [];
         if (isset($user)) {    
            $categories = Category::where('user_id',$user->id)->get();
-            return response()->json(["User" => $user, "Categories" => $categories,"Categories2" => $categories]);
+            return response()->json(["User" => $user, "Categories" => $categories]);
         }else{
             return response()->json(["Error" => "No existe un usuario con ese mail"]);
         }
