@@ -76,6 +76,7 @@ class passwordController extends Controller
            $categories = Category::where('user_id',$user->id)->get();
 
            foreach ($categories as $key => $category) {
+            
                $passwords = Password::where('category_id',$category->id)->get();
                array_push($passwordArray,$passwords);
            }
@@ -142,7 +143,6 @@ class passwordController extends Controller
              return response()->json(["Error" => "No existe la categoria"], 401);
         }else{
             $passwordSearched = Password::where('category_id',$categorySearched->id)->where('title',$request->title)->first();
-            //var_dump($passwordSearched->title);exit();
             if (!isset($passwordSearched)) {
                  return response()->json(["Error" => "No existe la contraseña"], 401);
             }else{                

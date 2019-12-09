@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\User;
 use App\Helper\Token;
 use App\Category;
+use App\Password;
 class userController extends Controller
 {
     /**
@@ -69,10 +70,22 @@ class userController extends Controller
 
 
         $user = User::where('email',$request->data_token->email)->first();
-        $infoToShow = [];
+
+        $infoToShow = array();
+        array_push($infoToShow, $user);
+        
         if (isset($user)) {    
+
            $categories = Category::where('user_id',$user->id)->get();
-            return response()->json(["User" => $user, "Categories" => $categories]);
+
+           foreach ($categories as $key => $category) {
+               array_push($infoToShow, ["Category" => $category]);     
+
+               $passwords = Password::where('category_id',$category->id)->get();
+               array_push($infoToShow,["Password" => $passwords]);
+           }
+            return response()->json(["Info user" => $infoToShow]);
+
         }else{
             return response()->json(["Error" => "No existe un usuario con ese mail"]);
         }
